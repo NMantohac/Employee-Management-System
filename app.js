@@ -1,21 +1,7 @@
-const mysql = require('mysql');
 const inquirer = require('inquirer');
 
-const sqlQuery = require('./sql-query');
-
-const connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'password',
-    database: 'employee_tracker_db'
-});
-
-connection.connect(err => {
-  if (err) throw err;
-  console.log('Connected!');
-  initialize();
-})
+const employeeController = require('./controllers/employeeController');
+const mysqlConnection = require('./config/connection');
 
 const initialize = async () => {
   try {
@@ -24,9 +10,9 @@ const initialize = async () => {
         type: 'list',
         name: 'search',
         message: 'What would you like to do?',
-        choices: ['View All Employees', 
-                  'View All Employees By Department', 
-                  'View All Employees By Manager', 
+        choices: ['View All Employees',
+                  'View All Employees By Department',
+                  'View All Employees By Manager',
                   'Add Employee',
                   'Remove Employee',
                   'Update Employee Role',
@@ -38,63 +24,65 @@ const initialize = async () => {
                   'Add Department',
                   'Remove Department',
                   'View Total Utilized Budget by Department',
-                  'Exit'
-                ]
-      }
-    )
-  
+                  'Exit',
+                ],
+      },
+    );
+
     console.log(search);
-    
+
     switch (search) {
       case 'View All Employees':
-        sqlQuery.viewEmployees();
+        employeeController.viewEmployees();
         break;
       case 'View All Employees By Department':
-        sqlQuery.viewEmployeesByDepartment();
+        employeeController.viewEmployeesByDepartment();
         break;
       case 'View All Employees By Manager':
-        sqlQuery.viewEmployeesByManager();
+        employeeController.viewEmployeesByManager();
         break;
       case 'Add Employee':
-        sqlQuery.addEmployee();
+        employeeController.addEmployee();
         break;
       case 'Remove Employee':
-        sqlQuery.removeEmployee();
+        employeeController.removeEmployee();
         break;
       case 'Update Employee Role':
-        sqlQuery.updateEmployeeRole();
+        employeeController.updateEmployeeRole();
         break;
       case 'Update Employee Manager':
-        sqlQuery.updateEmployeeManager();
+        employeeController.updateEmployeeManager();
         break;
       case 'View All Roles':
-        sqlQuery.viewRoles();
+        employeeController.viewRoles();
         break;
       case 'Add Role':
-        sqlQuery.addRole();
+        employeeController.addRole();
         break;
       case 'Remove Role':
-        sqlQuery.removeRole();
+        employeeController.removeRole();
         break;
       case 'View All Departments':
-        sqlQuery.viewDepartments();
+        employeeController.viewDepartments();
         break;
       case 'Add Department':
-        sqlQuery.addDepartment();
+        employeeController.addDepartment();
         break;
       case 'Remove Department':
-        sqlQuery.removeDepartment();
+        employeeController.removeDepartment();
         break;
       case 'View Total Utilized Budget by Department':
-        sqlQuery.viewBudgetByDepartment();
+        employeeController.viewBudgetByDepartment();
         break;
       case 'Exit':
-        connection.end();
+        mysqlConnection.end();
         break;
       default:
-        connection.end();
+        mysqlConnection.end();
     }
   } catch (err) {
     throw err;
   }
-}
+};
+
+initialize();
