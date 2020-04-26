@@ -1,17 +1,62 @@
 const inquirer = require('inquirer');
-const mysqlConnection = require('../config/connection');
+const connection = require('../config/connection');
 const employeeQueries = require('../models/employeeTracker/employeeQueries');
+// const app = require('../app');
 
-const viewEmployees = () => {
-  console.log('a');
+const viewEmployees = async () => {
+  try {
+      const [employees] = await connection.query(employeeQueries.findAllEmployees);
+        console.table(employees);
+        // app.initialize();
+  } catch (err) {
+    throw err;
+  }
 };
 
-const viewEmployeesByDepartment = () => {
-  console.log('b');
+const viewEmployeesByDepartment = async () => {
+  try {
+    const { employeesByDep } = await inquirer.prompt(
+      {
+        type: 'input',
+        name: 'employeesByDep',
+        message: 'Which department do you want to see the list of employees for that selected department?',
+      },
+    );
+    const [employees] = await connection.query(employeeQueries.findAllEmployeesByDep, employeesByDep);
+    console.table(employees);
+} catch (err) {
+  throw err;
+}
 };
 
-const viewEmployeesByManager = () => {
-  console.log('c');
+const viewEmployeesByManager = async () => {
+  try {
+    const { employeesByNoId } = await inquirer.prompt(
+      {
+        type: 'list',
+        name: 'employeesByNoId',
+        message: 'Do you want to see the list of employees with no managers?',
+        choices: ['Yes', 'No'],
+      },
+    );
+
+    if (employeesByNoId === 'Yes') {
+      const [employees] = await connection.query(employeeQueries.findAllEmployeesByNoId);
+      console.table(employees);
+    } else {
+      const { employeesByManagerId } = await inquirer.prompt(
+        {
+          type: 'input',
+          name: 'employeesByManagerId',
+          message: 'Which manager\'s id do you want to see the list of employees for that selected manager?',
+        },
+      );
+      const [employees] = await connection.query(employeeQueries.findAllEmployeesByManagerId, employeesByManagerId);
+      console.table(employees);
+    }
+} catch (err) {
+  throw err;
+}
 };
 
 const addEmployee = () => {
@@ -30,8 +75,13 @@ const updateEmployeeManager = () => {
   console.log('g');
 };
 
-const viewRoles = () => {
-  console.log('h');
+const viewRoles = async () => {
+  try {
+    const [roles] = await connection.query(employeeQueries.findAllRoles);
+      console.table(roles);
+} catch (err) {
+  throw err;
+}
 };
 
 const addRole = () => {
@@ -42,8 +92,13 @@ const removeRole = () => {
   console.log('j');
 };
 
-const viewDepartments = () => {
-  console.log('k');
+const viewDepartments = async () => {
+  try {
+    const [departments] = await connection.query(employeeQueries.findAllDepartments);
+      console.table(departments);
+} catch (err) {
+  throw err;
+}
 };
 
 const addDepartment = () => {

@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 
 const employeeController = require('./controllers/employeeController');
-const mysqlConnection = require('./config/connection');
+const connection = require('./config/connection');
 
 const initialize = async () => {
   try {
@@ -75,10 +75,10 @@ const initialize = async () => {
         employeeController.viewBudgetByDepartment();
         break;
       case 'Exit':
-        mysqlConnection.end();
+        connection.end();
         break;
       default:
-        mysqlConnection.end();
+        connection.end();
     }
   } catch (err) {
     throw err;
@@ -86,3 +86,5 @@ const initialize = async () => {
 };
 
 initialize();
+
+module.exports = { initialize };
