@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const employeeController = require('./controllers/employeeController');
 const connection = require('./config/connection');
 
-const initialize = async () => {
+async function initialize() {
   try {
     const { search } = await inquirer.prompt(
       {
@@ -33,46 +33,74 @@ const initialize = async () => {
 
     switch (search) {
       case 'View All Employees':
-        employeeController.viewEmployees();
+        employeeController.viewEmployees(() => {
+          initialize();
+        });
         break;
       case 'View All Employees By Department':
-        employeeController.viewEmployeesByDepartment();
+        employeeController.viewEmployeesByDepartment(() => {
+          initialize();
+        });
         break;
       case 'View All Employees By Manager':
-        employeeController.viewEmployeesByManager();
+        employeeController.viewEmployeesByManager(() => {
+          initialize();
+        });
         break;
       case 'Add Employee':
-        employeeController.addEmployee();
+        employeeController.addEmployee(() => {
+          initialize();
+        });
         break;
       case 'Remove Employee':
-        employeeController.removeEmployee();
+        employeeController.removeEmployee(() => {
+          initialize();
+        });
         break;
       case 'Update Employee Role':
-        employeeController.updateEmployeeRole();
+        employeeController.updateEmployeeRole(() => {
+          initialize();
+        });
         break;
       case 'Update Employee Manager':
-        employeeController.updateEmployeeManager();
+        employeeController.updateEmployeeManager(() => {
+          initialize();
+        });
         break;
       case 'View All Roles':
-        employeeController.viewRoles();
+        employeeController.viewRoles(() => {
+          initialize();
+        });
         break;
       case 'Add Role':
-        employeeController.addRole();
+        employeeController.addRole(() => {
+          initialize();
+        });
         break;
       case 'Remove Role':
-        employeeController.removeRole();
+        employeeController.removeRole(() => {
+          initialize();
+        });
         break;
       case 'View All Departments':
-        employeeController.viewDepartments();
+        employeeController.viewDepartments(() => {
+          initialize();
+        });
         break;
       case 'Add Department':
-        employeeController.addDepartment();
+        employeeController.addDepartment(() => {
+          initialize();
+        });
         break;
       case 'Remove Department':
-        employeeController.removeDepartment();
+        employeeController.removeDepartment(() => {
+          initialize();
+        });
         break;
       case 'View Total Utilized Budget by Department':
-        employeeController.viewBudgetByDepartment();
+        employeeController.viewBudgetByDepartment(() => {
+          initialize();
+        });
         break;
       case 'Exit':
         connection.end();
@@ -83,8 +111,6 @@ const initialize = async () => {
   } catch (err) {
     throw err;
   }
-};
+}
 
 initialize();
-
-module.exports = { initialize };
