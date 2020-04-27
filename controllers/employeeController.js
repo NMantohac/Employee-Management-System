@@ -173,8 +173,35 @@ const addEmployee = async () => {
   }
 };
 
-const removeEmployee = () => {
-  console.log('e');
+const removeEmployee = async () => {
+  try {
+    const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
+    const employeeArr = [];
+
+    for (let i = 0; i < employees.length; i++) {
+      const fullName = {
+        id: employees[i].id,
+        name: `${employees[i].first_name} ${employees[i].last_name}`,
+      };
+      employeeArr.push(fullName.name);
+    }
+
+    const { employeeName } = await inquirer.prompt(
+      {
+        type: 'list',
+        name: 'employeeName',
+        message: 'Which employee do you want to remove?',
+        choices: employeeArr,
+      },
+    );
+
+    const employeeId = employees[employeeArr.indexOf(employeeName)].id;
+
+    await connection.query(employeeQueries.removeEmployee, employeeId);
+    console.log('Employee successfully removed!');
+  } catch (err) {
+    throw err;
+  }
 };
 
 const updateEmployeeRole = () => {
@@ -242,8 +269,31 @@ const addRole = async () => {
   }
 };
 
-const removeRole = () => {
-  console.log('j');
+const removeRole = async () => {
+  try {
+    const [roles] = await connection.query(employeeQueries.findAllRoles);
+    const roleArr = [];
+
+    for (let i = 0; i < roles.length; i++) {
+      roleArr.push(roles[i].title);
+    }
+
+    const { role } = await inquirer.prompt(
+      {
+        type: 'list',
+        name: 'role',
+        message: 'Which role do you want to remove?',
+        choices: roleArr,
+      },
+    );
+
+    const roleId = roles[roleArr.indexOf(role)].id;
+
+    await connection.query(employeeQueries.removeRole, roleId);
+    console.log('Role successfully removed!');
+  } catch (err) {
+    throw err;
+  }
 };
 
 const viewDepartments = async () => {
@@ -283,8 +333,31 @@ const addDepartment = async () => {
   }
 };
 
-const removeDepartment = () => {
-  console.log('m');
+const removeDepartment = async () => {
+  try {
+    const [departments] = await connection.query(employeeQueries.findAllDepartments);
+    const deptArr = [];
+
+    for (let i = 0; i < departments.length; i++) {
+      deptArr.push(departments[i].name);
+    }
+
+    const { department } = await inquirer.prompt(
+      {
+        type: 'list',
+        name: 'department',
+        message: 'Which department do you want to remove?',
+        choices: deptArr,
+      },
+    );
+
+    const departmentId = departments[deptArr.indexOf(department)].id;
+
+    await connection.query(employeeQueries.removeDepartment, departmentId);
+    console.log('Department successfully removed!');
+  } catch (err) {
+    throw err;
+  }
 };
 
 const viewBudgetByDepartment = () => {

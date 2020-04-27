@@ -27,13 +27,19 @@ let findAllEmployeesByNoId = 'SELECT employee.id AS id, first_name, last_name, t
 
 const addEmployee = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);';
 
+const removeEmployee = 'DELETE FROM employee WHERE id = ?;';
+
 const findAllRoles = 'SELECT * FROM role;';
 
 const addRole = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);';
 
+const removeRole = 'DELETE FROM role WHERE id = ?;';
+
 const findAllDepartments = 'SELECT * FROM department;';
 
 const addDepartment = 'INSERT INTO department (name) VALUES (?);';
+
+const removeDepartment = 'DELETE FROM department WHERE id = ?;';
 
 module.exports = {
   findAllEmployees,
@@ -42,8 +48,11 @@ module.exports = {
   findAllEmployeesByManagerId,
   findAllEmployeesByNoId,
   addEmployee,
+  removeEmployee,
   findAllRoles,
   addRole,
+  removeRole,
   findAllDepartments,
   addDepartment,
+  removeDepartment,
 };
