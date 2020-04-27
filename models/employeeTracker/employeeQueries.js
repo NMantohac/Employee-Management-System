@@ -1,5 +1,4 @@
-// const connection = require('../../config/connection');
-
+// Find All Employees/Roles/Departments
 let findAllEmployees = 'SELECT employee.id AS id, first_name, last_name, title, name AS department, salary, manager_id';
       findAllEmployees += ' FROM employee';
       findAllEmployees += ' LEFT JOIN role ON employee.role_id = role.id';
@@ -25,20 +24,23 @@ let findAllEmployeesByNoId = 'SELECT employee.id AS id, first_name, last_name, t
       findAllEmployeesByNoId += ' LEFT JOIN department ON role.department_id = department.id';
       findAllEmployeesByNoId += ' WHERE employee.manager_id IS NULL;';
 
-const addEmployee = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);';
-
-const removeEmployee = 'DELETE FROM employee WHERE id = ?;';
-
+const findAllEmployeesByRoleId = 'SELECT * FROM employee WHERE role_id = ?;';
 const findAllRoles = 'SELECT * FROM role;';
-
-const addRole = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);';
-
-const removeRole = 'DELETE FROM role WHERE id = ?;';
-
+const findAllRolesByDepId = 'SELECT * FROM role WHERE department_id = ?;';
 const findAllDepartments = 'SELECT * FROM department;';
 
+// Update Employee Role/Manager
+const updateEmployeeRole = 'UPDATE employee SET role_id = ? WHERE id = ?;';
+const updateEmployeeManager = 'UPDATE employee SET manager_id = ? WHERE id = ?;';
+
+// Add Employee/Role/Department
+const addEmployee = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);';
+const addRole = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);';
 const addDepartment = 'INSERT INTO department (name) VALUES (?);';
 
+// Remove Employee/Role/Manager
+const removeEmployee = 'DELETE FROM employee WHERE id = ?;';
+const removeRole = 'DELETE FROM role WHERE id = ?;';
 const removeDepartment = 'DELETE FROM department WHERE id = ?;';
 
 module.exports = {
@@ -47,12 +49,16 @@ module.exports = {
   findAllEmployeesByDep,
   findAllEmployeesByManagerId,
   findAllEmployeesByNoId,
-  addEmployee,
-  removeEmployee,
+  findAllEmployeesByRoleId,
   findAllRoles,
-  addRole,
-  removeRole,
+  findAllRolesByDepId,
   findAllDepartments,
+  updateEmployeeRole,
+  updateEmployeeManager,
+  addEmployee,
+  addRole,
   addDepartment,
+  removeEmployee,
+  removeRole,
   removeDepartment,
 };

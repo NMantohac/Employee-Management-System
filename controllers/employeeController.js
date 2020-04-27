@@ -204,12 +204,91 @@ const removeEmployee = async () => {
   }
 };
 
-const updateEmployeeRole = () => {
-  console.log('f');
+const updateEmployeeRole = async () => {
+  try {
+    const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
+    const employeeArr = [];
+
+    for (let i = 0; i < employees.length; i++) {
+      const fullName = {
+        id: employees[i].id,
+        name: `${employees[i].first_name} ${employees[i].last_name}`,
+      };
+      employeeArr.push(fullName.name);
+    }
+
+    const [roles] = await connection.query(employeeQueries.findAllRoles);
+    const roleArr = [];
+
+    for (let i = 0; i < roles.length; i++) {
+      roleArr.push(roles[i].title);
+    }
+
+    const { employee, role } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employee',
+        message: 'Which employee whose role you\'d want to update?',
+        choices: employeeArr,
+      },
+      {
+        type: 'list',
+        name: 'role',
+        message: 'Which role do you want to set for the selected employee?',
+        choices: roleArr,
+      },
+    ]);
+
+      const employeeId = employees[employeeArr.indexOf(employee)].id;
+      const roleId = roles[roleArr.indexOf(role)].id;
+
+      await connection.query(employeeQueries.updateEmployeeRole, [roleId, employeeId]);
+      console.log('Employee role successfully updated!');
+  } catch (err) {
+    throw err;
+  }
 };
 
-const updateEmployeeManager = () => {
-  console.log('g');
+const updateEmployeeManager = async () => {
+  try {
+    const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
+    const employeeArr = [];
+
+    for (let i = 0; i < employees.length; i++) {
+      const fullName = {
+        id: employees[i].id,
+        name: `${employees[i].first_name} ${employees[i].last_name}`,
+      };
+      employeeArr.push(fullName.name);
+    }
+
+    const { employee, manager } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employee',
+        message: 'Which employee whose manager you\'d want to update?',
+        choices: employeeArr,
+      },
+      {
+        type: 'list',
+        name: 'manager',
+        message: 'Which employee do you want to set as manager for the selected employee?',
+        choices: employeeArr,
+      },
+    ]);
+
+      if (employee === manager) {
+        console.log('You can\'t assign a manager to the same employee!');
+      } else {
+        const employeeId = employees[employeeArr.indexOf(employee)].id;
+        const managerId = employees[employeeArr.indexOf(manager)].id;
+
+        await connection.query(employeeQueries.updateEmployeeManager, [managerId, employeeId]);
+        console.log('Employee manager successfully updated!');
+      }
+  } catch (err) {
+    throw err;
+  }
 };
 
 const viewRoles = async () => {
@@ -360,8 +439,45 @@ const removeDepartment = async () => {
   }
 };
 
-const viewBudgetByDepartment = () => {
-  console.log('n');
+const viewBudgetByDepartment = async () => {
+  try {
+    const [departments] = await connection.query(employeeQueries.findAllDepartments);
+    const deptArr = [];
+
+    for (let i = 0; i < departments.length; i++) {
+      deptArr.push(departments[i].name);
+    }
+
+    const { department } = await inquirer.prompt(
+      {
+        type: 'list',
+        name: 'department',
+        message: 'Which department do you want to see the combined salaries of all employees in?',
+        choices: deptArr,
+      },
+    );
+
+    const departmentId = departments[deptArr.indexOf(department)].id;
+
+    const [rolesByDepId] = await connection.query(employeeQueries.findAllRolesByDepId, departmentId);
+
+    let utilizedBudget = 0;
+
+    for (let i = 0; i < rolesByDepId.length; i++) {
+      const roleId = rolesByDepId[i].id;
+      const actualSalary = rolesByDepId[i].salary;
+
+      const [employeesByRoleId] = await connection.query(employeeQueries.findAllEmployeesByRoleId, roleId);
+
+      utilizedBudget += employeesByRoleId.length * actualSalary;
+
+      if (i === rolesByDepId.length - 1) {
+        console.log(`${department} Department's total utilized budget: ${utilizedBudget}`);
+      }
+    }
+  } catch (err) {
+    throw err;
+  }
 };
 
 module.exports = {
