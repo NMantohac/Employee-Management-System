@@ -1,7 +1,11 @@
+// const connection = require('../../config/connection');
+
 let findAllEmployees = 'SELECT employee.id AS id, first_name, last_name, title, name AS department, salary, manager_id';
       findAllEmployees += ' FROM employee';
       findAllEmployees += ' LEFT JOIN role ON employee.role_id = role.id';
       findAllEmployees += ' LEFT JOIN department ON role.department_id = department.id;';
+
+const findAllEmployeesRegular = 'SELECT * FROM employee;';
 
 let findAllEmployeesByDep = 'SELECT employee.id AS id, first_name, last_name, title, name AS department, salary, manager_id';
       findAllEmployeesByDep += ' FROM employee';
@@ -21,16 +25,25 @@ let findAllEmployeesByNoId = 'SELECT employee.id AS id, first_name, last_name, t
       findAllEmployeesByNoId += ' LEFT JOIN department ON role.department_id = department.id';
       findAllEmployeesByNoId += ' WHERE employee.manager_id IS NULL;';
 
+const addEmployee = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);';
+
 const findAllRoles = 'SELECT * FROM role;';
+
+const addRole = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);';
 
 const findAllDepartments = 'SELECT * FROM department;';
 
+const addDepartment = 'INSERT INTO department (name) VALUES (?);';
 
 module.exports = {
   findAllEmployees,
+  findAllEmployeesRegular,
   findAllEmployeesByDep,
   findAllEmployeesByManagerId,
   findAllEmployeesByNoId,
+  addEmployee,
   findAllRoles,
+  addRole,
   findAllDepartments,
+  addDepartment,
 };

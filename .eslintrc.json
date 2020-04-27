@@ -26,6 +26,8 @@
         "no-console": ["off"],
         "no-useless-catch": ["off"],
         "indent": ["off"],
-        "max-len": ["off"]
+        "max-len": ["off"],
+        "object-curly-newline": ["off"],
+        "no-plusplus": ["off"]
     }
 }
