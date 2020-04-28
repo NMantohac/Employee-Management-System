@@ -1,12 +1,15 @@
+// Require inquirer dependency and other javascript files
 const inquirer = require('inquirer');
 const connection = require('../config/connection');
 const employeeQueries = require('../models/employeeTracker/employeeQueries');
 
+// View All Employees
 const viewEmployees = async (init) => {
   try {
       const [employees] = await connection.query(employeeQueries.findAllEmployees);
       const newTableArr = [];
 
+      // Set manager full name if there's a manager id and it matches with the employee id for each employee, otherwise set it to null
       for (let i = 0; i < employees.length; i++) {
         let managerName = '';
         if (employees[i].manager_id !== null) {
@@ -19,6 +22,7 @@ const viewEmployees = async (init) => {
           managerName = null;
         }
 
+        // Creates a new table to display, so the manager column displays the full name rather than the manager id
         const newTable = {
           id: employees[i].id,
           first_name: employees[i].first_name,
@@ -37,12 +41,15 @@ const viewEmployees = async (init) => {
   }
 };
 
+// View All Employees By Department
 const viewEmployeesByDepartment = async (init) => {
   try {
     const [departments] = await connection.query(employeeQueries.findAllDepartments);
-    const departmentArr = [];
+    const deptArr = [];
+
+    // Adds each department name into the department array
     for (let i = 0; i < departments.length; i++) {
-      departmentArr.push(departments[i].name);
+      deptArr.push(departments[i].name);
     }
 
     const { employeesByDep } = await inquirer.prompt(
@@ -50,7 +57,7 @@ const viewEmployeesByDepartment = async (init) => {
         type: 'list',
         name: 'employeesByDep',
         message: 'Which department do you want to see the list of employees for that selected department?',
-        choices: departmentArr,
+        choices: deptArr,
       },
     );
 
@@ -62,11 +69,13 @@ const viewEmployeesByDepartment = async (init) => {
   }
 };
 
+// View All Employees By Manager
 const viewEmployeesByManager = async (init) => {
   try {
     const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
     const managerArr = [];
 
+    // Adds the full name of each employee into the manager array
     for (let i = 0; i < employees.length; i++) {
       const fullName = {
         name: `${employees[i].first_name} ${employees[i].last_name}`,
@@ -83,6 +92,7 @@ const viewEmployeesByManager = async (init) => {
       },
     );
 
+    // Views all employees with no manager, otherwise view all employees under a certain manager
     if (employeesByNoId === 'Yes') {
       const [employeesByNoIdRes] = await connection.query(employeeQueries.findAllEmployeesByNoId);
       console.table(employeesByNoIdRes);
@@ -100,6 +110,7 @@ const viewEmployeesByManager = async (init) => {
       const managerId = employees[managerArr.indexOf(employeeByManager)].id;
       const [employeesByManagerRes] = await connection.query(employeeQueries.findAllEmployeesByManagerId, managerId);
 
+      // Views all employees under a manager depending if that manager does have employees under them
       if (employeesByManagerRes.length === 0) {
         console.log('Failed to view employees because that employee isn\'t a manager since there are no employees under that person!');
         init();
@@ -113,18 +124,21 @@ const viewEmployeesByManager = async (init) => {
   }
 };
 
+// Add Employee
 const addEmployee = async (init) => {
   try {
     const [roles] = await connection.query(employeeQueries.findAllRoles);
-    const roleTitleArr = [];
+    const roleArr = [];
 
+    // Adds each role title into the role array
     for (let i = 0; i < roles.length; i++) {
-      roleTitleArr.push(roles[i].title);
+      roleArr.push(roles[i].title);
     }
 
     const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
     const managerArr = [];
 
+    // Adds the full name of each employee into the manager array
     for (let i = 0; i < employees.length; i++) {
       const fullName = {
         name: `${employees[i].first_name} ${employees[i].last_name}`,
@@ -149,7 +163,7 @@ const addEmployee = async (init) => {
         type: 'list',
         name: 'role',
         message: 'What is the employee\'s role?',
-        choices: roleTitleArr,
+        choices: roleArr,
       },
       {
         type: 'list',
@@ -159,8 +173,9 @@ const addEmployee = async (init) => {
       },
     ]);
 
-    const roleId = roles[roleTitleArr.indexOf(role)].id;
+    const roleId = roles[roleArr.indexOf(role)].id;
 
+    // Adds the new employee with or without a manager depending on if the 'None' option was selected
     if (manager === 'None') {
       await connection.query(employeeQueries.addEmployee, [firstName, lastName, roleId, null]);
       console.log('New employee with no manager successfully added!');
@@ -176,11 +191,13 @@ const addEmployee = async (init) => {
   }
 };
 
+// Remove Employee
 const removeEmployee = async (init) => {
   try {
     const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
     const employeeArr = [];
 
+    // Adds the full name of each employee into the employee array
     for (let i = 0; i < employees.length; i++) {
       const fullName = {
         name: `${employees[i].first_name} ${employees[i].last_name}`,
@@ -207,11 +224,13 @@ const removeEmployee = async (init) => {
   }
 };
 
+// Update Employee Role
 const updateEmployeeRole = async (init) => {
   try {
     const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
     const employeeArr = [];
 
+    // Adds the full name of each employee into the employee array
     for (let i = 0; i < employees.length; i++) {
       const fullName = {
         name: `${employees[i].first_name} ${employees[i].last_name}`,
@@ -219,6 +238,7 @@ const updateEmployeeRole = async (init) => {
       employeeArr.push(fullName.name);
     }
 
+    // Adds each role title into the role array
     const [roles] = await connection.query(employeeQueries.findAllRoles);
     const roleArr = [];
 
@@ -252,11 +272,13 @@ const updateEmployeeRole = async (init) => {
   }
 };
 
+// Update Employee Manager
 const updateEmployeeManager = async (init) => {
   try {
     const [employees] = await connection.query(employeeQueries.findAllEmployeesRegular);
     const employeeArr = [];
 
+    // Adds the full name of each employee into the employee array
     for (let i = 0; i < employees.length; i++) {
       const fullName = {
         name: `${employees[i].first_name} ${employees[i].last_name}`,
@@ -267,6 +289,7 @@ const updateEmployeeManager = async (init) => {
     const [managers] = await connection.query(employeeQueries.findAllEmployeesRegular);
     const managerArr = [];
 
+    // Adds the full name of each employee into the manager array
     for (let i = 0; i < managers.length; i++) {
       const fullName = {
         name: `${managers[i].first_name} ${managers[i].last_name}`,
@@ -291,12 +314,14 @@ const updateEmployeeManager = async (init) => {
       },
     ]);
 
+      // Updates the employee's manager if the employee and manager aren't the same person
       if (employee === manager) {
         console.log('Failed to update employee manager because you can\'t assign a manager to the same employee!');
         init();
       } else {
         const employeeId = employees[employeeArr.indexOf(employee)].id;
 
+        // Updates the employee's manager to another manager or to none depending if the 'None' option was selected
         if (manager === 'None') {
           await connection.query(employeeQueries.updateEmployeeManager, [null, employeeId]);
           console.log('Employee manager set to no manager successfully updated!');
@@ -313,6 +338,7 @@ const updateEmployeeManager = async (init) => {
   }
 };
 
+// View All Roles
 const viewRoles = async (init) => {
   try {
     const [roles] = await connection.query(employeeQueries.findAllRoles);
@@ -323,11 +349,13 @@ const viewRoles = async (init) => {
   }
 };
 
+// Add Role
 const addRole = async (init) => {
   try {
     const [roles] = await connection.query(employeeQueries.findAllRoles);
     const roleArr = [];
 
+    // Adds each role title into the role array
     for (let i = 0; i < roles.length; i++) {
       roleArr.push(roles[i].title);
     }
@@ -335,6 +363,7 @@ const addRole = async (init) => {
     const [departments] = await connection.query(employeeQueries.findAllDepartments);
     const deptArr = [];
 
+    // Adds each department name into the department array
     for (let j = 0; j < departments.length; j++) {
       deptArr.push(departments[j].name);
     }
@@ -360,6 +389,7 @@ const addRole = async (init) => {
 
     const departmentId = departments[deptArr.indexOf(department)].id;
 
+    // Adds the new role if that role doesn't already exist in the database
     if (roleArr.includes(title)) {
       console.log('Failed to add new role because that role already exists!');
       init();
@@ -373,11 +403,13 @@ const addRole = async (init) => {
   }
 };
 
+// Remove Role
 const removeRole = async (init) => {
   try {
     const [roles] = await connection.query(employeeQueries.findAllRoles);
     const roleArr = [];
 
+    // Adds each role title into the role array
     for (let i = 0; i < roles.length; i++) {
       roleArr.push(roles[i].title);
     }
@@ -401,6 +433,7 @@ const removeRole = async (init) => {
   }
 };
 
+// View All Departments
 const viewDepartments = async (init) => {
   try {
     const [departments] = await connection.query(employeeQueries.findAllDepartments);
@@ -411,11 +444,13 @@ const viewDepartments = async (init) => {
   }
 };
 
+// Add Department
 const addDepartment = async (init) => {
   try {
     const [departments] = await connection.query(employeeQueries.findAllDepartments);
     const deptArr = [];
 
+    // Adds each department name into the department array
     for (let i = 0; i < departments.length; i++) {
       deptArr.push(departments[i].name);
     }
@@ -428,6 +463,7 @@ const addDepartment = async (init) => {
       },
     );
 
+    // Adds the new department if that department doesn't already exist in the database
     if (deptArr.includes(department)) {
       console.log('Failed to add new department because that department already exists!');
       init();
@@ -441,11 +477,13 @@ const addDepartment = async (init) => {
   }
 };
 
+// Remove Department
 const removeDepartment = async (init) => {
   try {
     const [departments] = await connection.query(employeeQueries.findAllDepartments);
     const deptArr = [];
 
+    // Adds each department name into the department array
     for (let i = 0; i < departments.length; i++) {
       deptArr.push(departments[i].name);
     }
@@ -469,11 +507,13 @@ const removeDepartment = async (init) => {
   }
 };
 
+// View Total Utilized Budget By Department
 const viewBudgetByDepartment = async (init) => {
   try {
     const [departments] = await connection.query(employeeQueries.findAllDepartments);
     const deptArr = [];
 
+    // Adds each department name into the department array
     for (let i = 0; i < departments.length; i++) {
       deptArr.push(departments[i].name);
     }
@@ -493,6 +533,7 @@ const viewBudgetByDepartment = async (init) => {
 
     let utilizedBudget = 0;
 
+    // Combines the salaries for all roles in the specific department
     for (let i = 0; i < rolesByDepId.length; i++) {
       const roleId = rolesByDepId[i].id;
       const roleSalary = rolesByDepId[i].salary;
@@ -502,7 +543,7 @@ const viewBudgetByDepartment = async (init) => {
       utilizedBudget += employeesByRoleId.length * roleSalary;
 
       if (i === rolesByDepId.length - 1) {
-        console.log(`${department} Department's total utilized budget: ${utilizedBudget}`);
+        console.log(`${department} Department's Total Utilized Budget: ${utilizedBudget}`);
         init();
       }
     }

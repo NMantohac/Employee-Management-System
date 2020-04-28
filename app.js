@@ -1,9 +1,11 @@
+// Require inquirer dependency and other javascript files
 const inquirer = require('inquirer');
 
 const employeeController = require('./controllers/employeeController');
 const connection = require('./config/connection');
 
-async function initialize() {
+// Initialize function for main inquirer prompts
+const initialize = async () => {
   try {
     const { search } = await inquirer.prompt(
       {
@@ -23,14 +25,13 @@ async function initialize() {
                   'View All Departments',
                   'Add Department',
                   'Remove Department',
-                  'View Total Utilized Budget by Department',
+                  'View Total Utilized Budget By Department',
                   'Exit',
                 ],
       },
     );
 
-    console.log(search);
-
+    // Switch statements to invoke certain functions depending on inquirer prompt choice
     switch (search) {
       case 'View All Employees':
         employeeController.viewEmployees(() => {
@@ -97,7 +98,7 @@ async function initialize() {
           initialize();
         });
         break;
-      case 'View Total Utilized Budget by Department':
+      case 'View Total Utilized Budget By Department':
         employeeController.viewBudgetByDepartment(() => {
           initialize();
         });
@@ -111,6 +112,6 @@ async function initialize() {
   } catch (err) {
     throw err;
   }
-}
+};
 
 initialize();

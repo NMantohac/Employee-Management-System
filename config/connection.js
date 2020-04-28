@@ -1,5 +1,7 @@
+// Require MySQL2 dependency
 const mysql = require('mysql2');
 
+// Create a connection with the local MySQL database and export it
 const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
