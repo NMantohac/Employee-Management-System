@@ -2,7 +2,7 @@
 
 URL Links:
   1) https://github.com/NMantohac/Homework_12_Employee_Management_System
-  2) Overall Function: 
+  2) Overall Function: https://drive.google.com/file/d/1BwCYcejkEPVHMcmRTseaBqps9eeV6Upj/view
   
 ## Description:
   - An employee management system that displays data or does a certain function based on the user's choice out of a list in 
