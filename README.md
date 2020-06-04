@@ -1,7 +1,7 @@
 # Homework_12_Employee_Management_System
 
 URL Links:
-  1) GitHub: https://github.com/NMantohac/Homework_12_Employee_Management_System
+  1) GitHub: https://github.com/NMantohac/Employee-Management-System
   2) Overall Function: https://drive.google.com/file/d/1BwCYcejkEPVHMcmRTseaBqps9eeV6Upj/view
   
 ## Description:
